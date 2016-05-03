@@ -1,0 +1,3 @@
+- Estadisticas en tiempo real
+- Control de maquinaria
+- 

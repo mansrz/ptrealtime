@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="public/css/materialize.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+  <!-- -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ -->
+  <body bgcolor="#1D1D1E" onload="inicial();">
+    <div class="navbar-fixed">
+      <nav>
+        <div class="nav-wrapper">
+          <ul>
+            <li><a><i class="material-icons" onclick="show_nav()">view_headline</i></a></li>
+            <li>HYDRACRUX</li>
+          </ul>
+          <ul class="right hide-on-med-and-down"><li>About</li></ul>
+        </div>
+      </nav>
+    </div>
+    <ul id="slide-out" class="side-nav blue-grey darken-4">
+      <br>
+      <h6 class="blue-text lighten-2"><center><b>OPCIONES</b></center></h6>
+      <blockquote>
+        <span class="blue-text lighten-4">Filtro de datos</span>
+        <h6>Voltaje</h6>
+        <div class="switch" ><label class="blue-text lighten-5">Off<input type="checkbox" id="Data_Voltaje"><span class="lever"></span>On</label></div>
+        <br>
+        <h6>Temperatura</h6>
+        <div class="switch" ><label class="blue-text lighten-5">Off<input type="checkbox" id="Data_Temperatura"><span class="lever"></span>On</label></div>
+        <br>
+      </blockquote>
+      <li><hr class="dark-blue" width="75%"/></li>
+    </ul>
+    <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+    <br>
+    <div class="row">
+      <div class="col col s12 m4 l1">
+        <br>
+      </div>
+      <div class="col col s12 m4 l10">
+        <ul class="collection">
+          <li class="collection-item" id="char1">
+            <div style="width:80%;margin-left:10%;" class="card recuadro center white-text"><br>VOLTAJE EN TIEMPO REAL<br><hr width="75%"/>Punto de muestreo Guayaquil - Alimentacion de maquinaria A<br>.</div><div id="cnt-voltaje"></div>
+          </li>
+          <li class="collection-item" id="char2">
+            <div style="width:80%;margin-left:10%;" class="card recuadro center white-text"><br>TEMPERATURA EN TIEMPO REAL<br><hr width="75%"/>Punto de muestreo Quito - Temperatura del reactor 1<br>.</div><div id="cnt-temperature" ></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col col s12 m4 l1"><br></div>
+    </div>
+    <footer class="page-footer">
+      <div class="footer-copyright">
+        <div class="container">Copyright HYDRACRUX © 2013<a class="grey-text text-lighten-4 right" href="#!">More Links</a></div>
+      </div>
+    </footer>
+    <script>$(".button-collapse").sideNav();</script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="public/js/materialize.min.js"></script>
+    <script src="https://code.highcharts.com"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="public/js/dark-blue.js"></script>
+    <script>$(".button-collapse").sideNav();</script>
+    <script>
+      $(document).ready(function(){
+       $('.collapsible').collapsible({
+         accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+       });
+     });
+    </script>
+    <script>
+      $(document).ready(function()
+      {
+        var voltaje =1;
+        var temperatura=1;
+        $("#Data_Voltaje").click(function(){
+          if(voltaje==1)
+          {
+              $('#char1').hide("slow");
+              voltaje=0;
+          }
+          else {
+            {
+              $('#char1').show("slow");
+              voltaje=1;
+            }
+          }
+         });
+         $("#Data_Temperatura").click(function(){
+           if(temperatura==1)
+           {
+               $('#char2').hide("slow");
+               temperatura=0;
+           }
+           else {
+             {
+               $('#char2').show("slow");
+               temperatura=1;
+             }
+           }
+          });
+      });
+    </script>
+    <script>
+      function inicial()
+      {
+        document.getElementById("Data_Voltaje").checked=true;
+        document.getElementById("Data_Temperatura").checked=true;
+      }
+    </script>
+    <script>
+    Highcharts.createElement('link', {
+       href: 'https://fonts.googleapis.com/css?family=Unica+One',
+       rel: 'stylesheet',
+       type: 'text/css'
+    }, null, document.getElementsByTagName('head')[0]);
+
+    Highcharts.theme = {
+       colors: ["#76ff03", "#90ee7e", "#f45b5b", "#a93226", "#aaeeee", "#ff0066", "#eeaaee",
+          "#55BF3B", "#DF5353", "#c0392b", "#aaeeee"],
+       chart: {
+          backgroundColor: {
+             linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+             stops: [
+                [0, '#2a2a2b'],
+                [1, '#3e3e40']
+             ]
+          },
+          style: {
+             fontFamily: "'Unica One', sans-serif"
+          },
+          plotBorderColor: '#606063'
+       },
+       title: {
+          style: {
+             color: '#E0E0E3',
+             textTransform: 'uppercase',
+             fontSize: '20px'
+          }
+       },
+       subtitle: {
+          style: {
+             color: '#E0E0E3',
+             textTransform: 'uppercase'
+          }
+       },
+       xAxis: {
+          gridLineColor: '#707073',
+          labels: {
+             style: {
+                color: '#E0E0E3'
+             }
+          },
+          lineColor: '#707073',
+          minorGridLineColor: '#505053',
+          tickColor: '#707073',
+          title: {
+             style: {
+                color: '#A0A0A3'
+
+             }
+          }
+       },
+       yAxis: {
+          gridLineColor: '#707073',
+          labels: {
+             style: {
+                color: '#E0E0E3'
+             }
+          },
+          lineColor: '#707073',
+          minorGridLineColor: '#505053',
+          tickColor: '#707073',
+          tickWidth: 1,
+          title: {
+             style: {
+                color: '#A0A0A3'
+             }
+          }
+       },
+       tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.85)',
+          style: {
+             color: '#F0F0F0'
+          }
+       },
+       plotOptions: {
+          series: {
+             dataLabels: {
+                color: '#B0B0B3'
+             },
+             marker: {
+                lineColor: '#333'
+             }
+          },
+          boxplot: {
+             fillColor: '#505053'
+          },
+          candlestick: {
+             lineColor: 'white'
+          },
+          errorbar: {
+             color: 'white'
+          }
+       },
+       legend: {
+          itemStyle: {
+             color: '#E0E0E3'
+          },
+          itemHoverStyle: {
+             color: '#FFF'
+          },
+          itemHiddenStyle: {
+             color: '#606063'
+          }
+       },
+       credits: {
+          style: {
+             color: '#666'
+          }
+       },
+       labels: {
+          style: {
+             color: '#707073'
+          }
+       },
+
+       drilldown: {
+          activeAxisLabelStyle: {
+             color: '#F0F0F3'
+          },
+          activeDataLabelStyle: {
+             color: '#F0F0F3'
+          }
+       },
+
+       navigation: {
+          buttonOptions: {
+             symbolStroke: '#DDDDDD',
+             theme: {
+                fill: '#505053'
+             }
+          }
+       },
+
+       // scroll charts
+       rangeSelector: {
+          buttonTheme: {
+             fill: '#505053',
+             stroke: '#000000',
+             style: {
+                color: '#CCC'
+             },
+             states: {
+                hover: {
+                   fill: '#707073',
+                   stroke: '#000000',
+                   style: {
+                      color: 'white'
+                   }
+                },
+                select: {
+                   fill: '#000003',
+                   stroke: '#000000',
+                   style: {
+                      color: 'white'
+                   }
+                }
+             }
+          },
+          inputBoxBorderColor: '#505053',
+          inputStyle: {
+             backgroundColor: '#333',
+             color: 'silver'
+          },
+          labelStyle: {
+             color: 'silver'
+          }
+       },
+       navigator: {
+          handles: {
+             backgroundColor: '#666',
+             borderColor: '#AAA'
+          },
+          outlineColor: '#CCC',
+          maskFill: 'rgba(255,255,255,0.1)',
+          series: {
+             color: '#7798BF',
+             lineColor: '#A6C7ED'
+          },
+          xAxis: {
+             gridLineColor: '#505053'
+          }
+       },
+       scrollbar: {
+          barBackgroundColor: '#808083',
+          barBorderColor: '#808083',
+          buttonArrowColor: '#CCC',
+          buttonBackgroundColor: '#606063',
+          buttonBorderColor: '#606063',
+          rifleColor: '#FFF',
+          trackBackgroundColor: '#404043',
+          trackBorderColor: '#404043'
+       },
+       legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
+       background2: '#505053',
+       dataLabelsColor: '#B0B0B3',
+       textColor: '#C0C0C0',
+       contrastTextColor: '#F0F0F3',
+       maskColor: 'rgba(255,255,255,0.3)'
+    };
+    Highcharts.setOptions(Highcharts.theme);
+    </script>
+    <script>function show_nav(){$('.button-collapse').sideNav('show');}</script>
+    <script>
+    $(function () {
+  $(document).ready(function () {
+      Highcharts.setOptions({
+          global: {
+              useUTC: false
+          }
+      });
+
+      $('#cnt-voltaje').highcharts({
+        chart: {
+            type: 'spline',
+            animation: Highcharts.svg, // don't animate in old IE
+            marginRight: 10,
+            events: {
+                load: function () {
+
+                    // set up the updating of the chart each second
+                    var series = this.series[0];
+                    var socket = io();
+                    var datos;
+                    socket.on('chat message', function(msg){
+                      datos=msg;
+                      });
+
+                    setInterval(function () {
+                        var x = (new Date()).getTime(), // current time
+                            y = datos;
+                        series.addPoint([x, y], true, true);
+                    }, 1000);
+                }
+            }
+        },
+          title: {
+              text: ''
+          },
+          xAxis: {
+              type: 'datetime',
+              tickPixelInterval: 150,
+              gridLineWidth: 1,
+              gridLineColor: '##D8D8D8'
+          },
+          yAxis: {
+              title: {
+                  text: 'Value',
+                  gridLineWidth: 5,
+                   gridLineColor: '#D8D8D8'
+              },
+              plotLines: [{
+                  value: 0,
+                  width: 1,
+                  color: '#808080'
+              }]
+          },
+          tooltip: {formatter: function () {return '<b>' + this.series.name + '</b><br/>' +Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +Highcharts.numberFormat(this.y, 2);}},
+          legend: {
+
+              itemStyle: {font: '9pt Trebuchet MS, Verdana, sans-serif',color: '#A0A0A0'},
+          		itemHoverStyle: {color: '#FFF'},
+              itemHiddenStyle: {color: '#444'}
+          },
+          exporting: {
+              enabled: false
+          },
+          series: [{
+              name: 'Voltaje',
+              color: '#b71c1c',
+			        lineColor: '#f44336',
+              data: (function () {
+                  // generate an array of random data
+                  var data = [],
+                      time = (new Date()).getTime(),
+                      i;
+
+                  for (i = -19; i <= 0; i += 1)
+                  {
+                      data.push({x: time + i * 1000,y: 0});
+                  }
+                  return data;
+              }())
+          }]
+      });
+  });
+});
+    </script>
+    <script>
+    $(function () {
+  $(document).ready(function () {
+      Highcharts.setOptions({
+          global: {
+              useUTC: false
+          }
+      });
+      $('#cnt-temperature').highcharts({
+          chart: {
+              type: 'spline',
+              animation: Highcharts.svg, // don't animate in old IE
+              marginRight: 10,
+              events: {
+                  load: function () {
+
+                      // set up the updating of the chart each second
+                      var series = this.series[0];
+                      var socket = io();
+                      var datos;
+                      socket.on('tmp message', function(msg){
+                        datos=msg;
+                        });
+
+                      setInterval(function () {
+                          var x = (new Date()).getTime(), // current time
+                              y = datos;
+                          series.addPoint([x, y], true, true);
+                      }, 1000);
+                  }
+              }
+          },
+          title: {
+              text: 'TEMPERATURA EN TIEMPO REAL'
+          },
+          xAxis: {
+              type: 'datetime',
+              tickPixelInterval: 150
+          },
+          yAxis: {
+              title: {
+                  text: 'Value'
+              },
+              plotLines: [{
+                  value: 0,
+                  width: 1,
+                  color: '#808080'
+              }]
+          },
+          tooltip: {
+              formatter: function () {
+                  return '<b>' + this.series.name + '</b><br/>' +
+                      Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                      Highcharts.numberFormat(this.y, 2);
+              }
+          },
+          legend: {
+              enabled: false
+          },
+          exporting: {
+              enabled: false
+          },
+          series: [{
+              name: 'Temperatura',
+              data: (function () {
+                  // generate an array of random data
+                  var data = [],
+                      time = (new Date()).getTime(),
+                      i;
+
+                  for (i = -19; i <= 0; i += 1)
+                  {
+                      data.push({x: time + i * 1000,y: 0});
+                  }
+                  return data;
+              }())
+          }]
+      });
+  });
+});
+    </script>
+  </body>
+</html>
